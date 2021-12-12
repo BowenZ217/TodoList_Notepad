@@ -2,6 +2,7 @@ package com.ptrz.todolist_notepad;
 
 import android.content.Intent;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -71,14 +72,26 @@ public class MainActivity extends AppCompatActivity {
         buttonAdd.setOnClickListener(v -> {
             // get the text user input
             String todoItem = newItem.getText().toString();
-            // add an item to the model
-            items.add(todoItem);
-            // notify adapter that an item is inserted
-            itemsAdapter.notifyItemInserted(items.size() - 1);
-            // reset the text to blank
-            newItem.setText("");
-            Toast.makeText(getApplicationContext(), "Item was added", Toast.LENGTH_SHORT).show();
-            saveItems();
+            if (!"".equals(todoItem)) {
+                // add an item to the model
+                items.add(todoItem);
+                // notify adapter that an item is inserted
+                itemsAdapter.notifyItemInserted(items.size() - 1);
+                // reset the text to blank
+                newItem.setText("");
+                Toast.makeText(getApplicationContext(), "Item was added", Toast.LENGTH_SHORT).show();
+                saveItems();
+            } else {
+                AlertDialog.Builder alertDialog2 = new AlertDialog.Builder(this)
+                        .setTitle("Cannot add blank events")
+                        .setMessage("Please add some text")
+                        .setIcon(R.mipmap.ic_launcher)
+                        .setPositiveButton("Confirmed",
+                                (dialogInterface, i) ->
+                                        Toast.makeText(MainActivity.this,
+                                                "Please add some text", Toast.LENGTH_SHORT).show());
+                alertDialog2.show();
+            }
         });
     }
 

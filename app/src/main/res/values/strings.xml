@@ -1,7 +1,3 @@
 <resources>
     <string name="app_name">TodoList_Notepad</string>
-    <string name="update_the_item">Update the item</string>
-    <string name="save">Save</string>
-    <string name="add">Add</string>
-    <string name="add_an_item_here">Add an item here!</string>
 </resources>

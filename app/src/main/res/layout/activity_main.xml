@@ -7,38 +7,32 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/buttonAdd"
-        android:layout_width="100dp"
-        android:layout_height="71dp"
-        android:text="@string/add"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rvItem"
-        app:layout_constraintVertical_bias="1.0" />
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvItem"
-        android:layout_width="413dp"
-        android:layout_height="651dp"
+        android:layout_width="411dp"
+        android:layout_height="645dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.4"
+        tools:ignore="MissingConstraints" />
 
     <EditText
         android:id="@+id/newItem"
-        android:layout_width="295dp"
-        android:layout_height="66dp"
+        android:layout_width="320dp"
+        android:layout_height="49dp"
         android:ems="10"
-        android:hint="@string/add_an_item_here"
-        android:inputType="textPersonName"
+        android:hint="Add an item here!"
+        android:inputType="text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/buttonAdd"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rvItem"
-        app:layout_constraintVertical_bias="1.0"
-        android:autofillHints="" />
+        app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/buttonAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </android.support.constraint.ConstraintLayout>
