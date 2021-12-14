@@ -4,7 +4,7 @@
 
 Submitted by: **Peter Zhu**
 
-Time spent: **5** hours spent in total
+Time spent: **5.5** hours spent in total
 
 ## User Stories
 
@@ -19,6 +19,8 @@ The following **optional** features are implemented:
 * [x] User can **tap a todo item in the list and bring up an edit screen for the todo item** and then have any changes to the text reflected in the todo list
 
 The following **additional** features are implemented:
+
+* [x] Remind the user to fill in some information when the input box is empty.
 
 * [ ] List anything else that you can get done to improve the app functionality!
 
