@@ -4,7 +4,7 @@
 
 Submitted by: **Peter Zhu**
 
-Time spent: **5** hours spent in total
+Time spent: **6** hours spent in total
 
 ## User Stories
 
@@ -20,13 +20,19 @@ The following **optional** features are implemented:
 
 The following **additional** features are implemented:
 
+* [x] Remind the user to fill in some information when the input box is empty.
+
+* [x] Events can be given a deadline.
+
+* [x] Events can be marked as important, and important events will be topped.
+
 * [ ] List anything else that you can get done to improve the app functionality!
 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
 
-<img src='walkthrough.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='walkthrough1.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
