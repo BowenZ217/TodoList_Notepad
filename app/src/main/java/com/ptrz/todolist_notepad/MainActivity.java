@@ -11,8 +11,11 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -43,12 +46,19 @@ public class MainActivity extends AppCompatActivity {
     EditText newItem;
     RecyclerView recyclerView;
     ItemAdapter itemAdapter;
+    Spinner mode;
+
+
     Gson gson = new Gson();
+
+    int sortMode = 0;
 
     List<String> save_list = new ArrayList<>();
     List<Item> item_list = new ArrayList<>();
 
     Comparator<Item> compareByImportant = Comparator.comparing(Item::getImportant);
+    Comparator<Item> compareByName = Comparator.comparing(Item::getEvent);
+    Comparator<Item> compareByDate = Comparator.comparing(Item::getDate);
 
 
     @Override
@@ -63,20 +73,33 @@ public class MainActivity extends AppCompatActivity {
         newItem = findViewById(R.id.newItem);
         // list view box on main screen
         recyclerView = findViewById(R.id.recycler_view);
+        // mode selected
+        mode = findViewById(R.id.mode);
 
 
         loadItems();
-        /*
+
         // -------------------- test case --------------------
-        item_list.add(new Item("event 1", "2021/2/2"));
-        item_list.add(new Item("event 2", "2021/3/1"));
-        item_list.add(new Item("event 3", "2021/2/23"));
-        item_list.add(new Item("event 4", "2021/3/16"));
-        item_list.add(new Item("event 5", "2021/6/20"));
-        item_list.add(new Item("event 6", "2021/9/30"));
-         */
+        // item_list.add(new Item("event 1", "2021/2/2"));
+        // item_list.add(new Item("event 2", "2021/3/1"));
+        // item_list.add(new Item("event 3", "2021/2/23"));
+        // item_list.add(new Item("event 4", "2021/3/16"));
+        // item_list.add(new Item("event 5", "2021/6/20"));
+        // item_list.add(new Item("event 6", "2021/9/30"));
 
 
+        mode.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                sortMode = position;
+                listSort(sortMode);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         ItemAdapter.onLongClickListener onLongClickListener = position -> {
             // delete the item from the model
@@ -114,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 item_list.add(new Item(todoItem));
                 // notify adapter that an item is inserted
                 itemAdapter.notifyItemInserted(item_list.size() - 1);
+                listSort(sortMode);
                 // reset the text to blank
                 newItem.setText("");
                 Toast.makeText(getApplicationContext(), "Item was added", Toast.LENGTH_SHORT).show();
@@ -149,17 +173,9 @@ public class MainActivity extends AppCompatActivity {
             item_list.get(position).setDate(itemDate);
             item_list.get(position).setImportant(important);
 
-            // sort the array
-            Collections.sort(item_list, compareByImportant);
-            // notify adapter
+            listSort(sortMode);
+
             itemAdapter.notifyItemRangeChanged(0, item_list.size());
-
-
-            Item.reverse(item_list);
-            // notify adapter
-            itemAdapter.notifyItemRangeChanged(0, item_list.size());
-            // itemAdapter.notifyItemChanged(position);
-
             // persist the changes
             saveItems();
             Toast.makeText(getApplicationContext(), "Item update successfully", Toast.LENGTH_SHORT).show();
@@ -167,6 +183,38 @@ public class MainActivity extends AppCompatActivity {
             Log.v("MainActivity", "unknown call to onActivityResult");
         }
         // super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void listSort(int i) {
+        if (i == -1) {
+            sortByImportant();
+            itemAdapter.notifyItemRangeChanged(0, item_list.size());
+        } else if (i == 1) {
+            sortByDate();
+            // notify adapter
+            itemAdapter.notifyItemRangeChanged(0, item_list.size());
+        } else if (i == 2) {
+            sortByName();
+            // notify adapter
+            itemAdapter.notifyItemRangeChanged(0, item_list.size());
+        }
+    }
+
+    private void sortByImportant() {
+        // sort the array
+        Item.reverse(item_list);
+        Collections.sort(item_list, compareByImportant);
+        Item.reverse(item_list);
+    }
+
+    private void sortByName() {
+        Collections.sort(item_list, compareByName);
+        sortByImportant();
+    }
+
+    private void sortByDate() {
+        Collections.sort(item_list, compareByDate);
+        sortByImportant();
     }
 
     // /*
