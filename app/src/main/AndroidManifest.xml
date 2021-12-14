@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TodoList_Notepad">
         <activity
-            android:name=".EditActivity"
+            android:name=".Activity.EditActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

@@ -1,10 +1,13 @@
 package com.ptrz.todolist_notepad;
 
 import android.content.Intent;
-import android.os.Bundle;
+import android.os.Build;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,16 +15,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-/*
-import com.fasterxml.jackson.core.type.TypeReference;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.ptrz.todolist_notepad.models.Item;
- */
+import com.google.gson.Gson;
+import com.ptrz.todolist_notepad.Activity.EditActivity;
+import com.ptrz.todolist_notepad.Adapter.ItemAdapter;
+import com.ptrz.todolist_notepad.Model.Item;
 
 import org.apache.commons.io.FileUtils;
 
@@ -29,65 +26,94 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends AppCompatActivity {
-    public static final String KEY_ITEM_TEXT = "item_text";
-    public static final String KEY_ITEM_POSITION = "item_position";
-    public static final int EDIT_TEXT_CODE = 20;
 
-    List<String> items;
+    public static final String KEY_ITEM_TEXT = "item_text";
+    public static final String KEY_ITEM_DATE = "item_date";
+    public static final String KEY_ITEM_POSITION = "item_position";
+    public static final String KEY_ITEM_IMPORTANT = "item_important";
+    public static final int EDIT_TEXT_CODE = 20;
 
     Button buttonAdd;
     EditText newItem;
-    RecyclerView rvItem;
-    ItemsAdapter itemsAdapter;
+    RecyclerView recyclerView;
+    ItemAdapter itemAdapter;
+    Gson gson = new Gson();
+
+    List<String> save_list = new ArrayList<>();
+    List<Item> item_list = new ArrayList<>();
+
+    Comparator<Item> compareByImportant = Comparator.comparing(Item::getImportant);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        /* -------------------- Initialization --------------------*/
         // ADD button on main screen
         buttonAdd = findViewById(R.id.buttonAdd);
         // text input box on main screen
         newItem = findViewById(R.id.newItem);
         // list view box on main screen
-        rvItem = findViewById(R.id.rvItem);
+        recyclerView = findViewById(R.id.recycler_view);
+
 
         loadItems();
+        /*
+        // -------------------- test case --------------------
+        item_list.add(new Item("event 1", "2021/2/2"));
+        item_list.add(new Item("event 2", "2021/3/1"));
+        item_list.add(new Item("event 3", "2021/2/23"));
+        item_list.add(new Item("event 4", "2021/3/16"));
+        item_list.add(new Item("event 5", "2021/6/20"));
+        item_list.add(new Item("event 6", "2021/9/30"));
+         */
 
-        ItemsAdapter.onLongClickListener onLongClickListener = position -> {
+
+
+        ItemAdapter.onLongClickListener onLongClickListener = position -> {
             // delete the item from the model
-            items.remove(position);
+            item_list.remove(position);
             // notify the adapter
-            itemsAdapter.notifyItemRemoved(position);
+            itemAdapter.notifyItemRemoved(position);
             Toast.makeText(getApplicationContext(), "Item was removed", Toast.LENGTH_SHORT).show();
             saveItems();
         };
-        ItemsAdapter.onClickListener onClickListener = position -> {
+        ItemAdapter.onClickListener onClickListener = position -> {
             // create the new activity
             Intent i = new Intent(MainActivity.this, EditActivity.class);
             // pass the data being edited
-            i.putExtra(KEY_ITEM_TEXT, items.get(position));
+            i.putExtra(KEY_ITEM_TEXT, item_list.get(position).getEvent());
+            i.putExtra(KEY_ITEM_DATE, item_list.get(position).getDate());
             i.putExtra(KEY_ITEM_POSITION, position);
+            i.putExtra(KEY_ITEM_IMPORTANT, item_list.get(position).getImportant());
             // display the activity
             startActivityForResult(i, EDIT_TEXT_CODE);
         };
 
-        itemsAdapter = new ItemsAdapter(items, onLongClickListener, onClickListener);
-        rvItem.setAdapter(itemsAdapter);
-        // show in a vertical line
-        rvItem.setLayoutManager(new LinearLayoutManager(this));
+        itemAdapter = new ItemAdapter(item_list, onLongClickListener, onClickListener);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(itemAdapter);
 
         buttonAdd.setOnClickListener(v -> {
             // get the text user input
             String todoItem = newItem.getText().toString();
             if (!"".equals(todoItem)) {
                 // add an item to the model
-                items.add(todoItem);
+                item_list.add(new Item(todoItem));
                 // notify adapter that an item is inserted
-                itemsAdapter.notifyItemInserted(items.size() - 1);
+                itemAdapter.notifyItemInserted(item_list.size() - 1);
                 // reset the text to blank
                 newItem.setText("");
                 Toast.makeText(getApplicationContext(), "Item was added", Toast.LENGTH_SHORT).show();
@@ -113,13 +139,27 @@ public class MainActivity extends AppCompatActivity {
             // Retrieve the update text value
             assert data != null;
             String itemText = data.getStringExtra(KEY_ITEM_TEXT);
+            String itemDate = data.getStringExtra(KEY_ITEM_DATE);
+            Boolean important = data.getExtras().getBoolean(KEY_ITEM_IMPORTANT);
             // extract the original position of the edited item from position key
             int position = data.getExtras().getInt(KEY_ITEM_POSITION);
 
             // update the model at the position with the new item text
-            items.set(position, itemText);
+            item_list.get(position).setEvent(itemText);
+            item_list.get(position).setDate(itemDate);
+            item_list.get(position).setImportant(important);
+
+            // sort the array
+            Collections.sort(item_list, compareByImportant);
             // notify adapter
-            itemsAdapter.notifyItemChanged(position);
+            itemAdapter.notifyItemRangeChanged(0, item_list.size());
+
+
+            Item.reverse(item_list);
+            // notify adapter
+            itemAdapter.notifyItemRangeChanged(0, item_list.size());
+            // itemAdapter.notifyItemChanged(position);
+
             // persist the changes
             saveItems();
             Toast.makeText(getApplicationContext(), "Item update successfully", Toast.LENGTH_SHORT).show();
@@ -129,24 +169,34 @@ public class MainActivity extends AppCompatActivity {
         // super.onActivityResult(requestCode, resultCode, data);
     }
 
+    // /*
     private File getDataFile() {
         return new File(getFilesDir(), "data.txt");
     }
     // this function will load items by reading every line of data file
     private void loadItems() {
         try {
-            items = new ArrayList<>(FileUtils.readLines(getDataFile(), Charset.defaultCharset()));
+            item_list = new ArrayList<>();
+            save_list = new ArrayList<>(FileUtils.readLines(getDataFile(), Charset.defaultCharset()));
+            for (String json : save_list) {
+                item_list.add(gson.fromJson(json, Item.class));
+            }
         } catch (IOException e) {
             Log.e("MainActivity", "Error reading items", e);
-            items = new ArrayList<>();
+            item_list = new ArrayList<>();
         }
     }
     // this function save items by writing them into the data file
     private void saveItems() {
         try {
-            FileUtils.writeLines(getDataFile(), items);
+            save_list = new ArrayList<>();
+            for (Item i : item_list) {
+                save_list.add(gson.toJson(i));
+            }
+            FileUtils.writeLines(getDataFile(), save_list);
         } catch (IOException e) {
             Log.e("MainActivity", "Error writing items", e);
         }
     }
+    // */
 }
