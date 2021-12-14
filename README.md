@@ -26,13 +26,15 @@ The following **additional** features are implemented:
 
 * [x] Events can be marked as important, and important events will be topped.
 
+* [x] Events can be sort by name or by due date
+
 * [ ] List anything else that you can get done to improve the app functionality!
 
 ## Video Walkthrough
 
 Here's a walkthrough of implemented user stories:
 
-<img src='walkthrough2.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='walkthrough.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
