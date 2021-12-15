@@ -191,10 +191,12 @@ public class MainActivity extends AppCompatActivity {
             itemAdapter.notifyItemRangeChanged(0, item_list.size());
         } else if (i == 1) {
             sortByDate();
+            sortByImportant();
             // notify adapter
             itemAdapter.notifyItemRangeChanged(0, item_list.size());
         } else if (i == 2) {
             sortByName();
+            sortByImportant();
             // notify adapter
             itemAdapter.notifyItemRangeChanged(0, item_list.size());
         }
@@ -229,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
             for (String json : save_list) {
                 item_list.add(gson.fromJson(json, Item.class));
             }
+            sortByImportant();
         } catch (IOException e) {
             Log.e("MainActivity", "Error reading items", e);
             item_list = new ArrayList<>();
