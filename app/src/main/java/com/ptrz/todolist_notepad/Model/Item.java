@@ -7,6 +7,7 @@ public class Item {
     private String event, date;
     private Boolean important = false;
     private String isImportant = "";
+    private String details = "";
 
     public Item(String event) {
         this.event = event;
@@ -32,6 +33,14 @@ public class Item {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public String getDetails() {
+        return details;
     }
 
     public Boolean getImportant() {

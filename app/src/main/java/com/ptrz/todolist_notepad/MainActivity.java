@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String KEY_ITEM_DATE = "item_date";
     public static final String KEY_ITEM_POSITION = "item_position";
     public static final String KEY_ITEM_IMPORTANT = "item_important";
+    public static final String KEY_ITEM_DETAIL = "item_detail";
     public static final int EDIT_TEXT_CODE = 20;
 
     Button buttonAdd;
@@ -115,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
             // pass the data being edited
             i.putExtra(KEY_ITEM_TEXT, item_list.get(position).getEvent());
             i.putExtra(KEY_ITEM_DATE, item_list.get(position).getDate());
+            i.putExtra(KEY_ITEM_DETAIL, item_list.get(position).getDetails());
             i.putExtra(KEY_ITEM_POSITION, position);
             i.putExtra(KEY_ITEM_IMPORTANT, item_list.get(position).getImportant());
             // display the activity
@@ -164,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
             assert data != null;
             String itemText = data.getStringExtra(KEY_ITEM_TEXT);
             String itemDate = data.getStringExtra(KEY_ITEM_DATE);
+            String itemDetail = data.getStringExtra(KEY_ITEM_DETAIL);
             Boolean important = data.getExtras().getBoolean(KEY_ITEM_IMPORTANT);
             // extract the original position of the edited item from position key
             int position = data.getExtras().getInt(KEY_ITEM_POSITION);
@@ -171,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
             // update the model at the position with the new item text
             item_list.get(position).setEvent(itemText);
             item_list.get(position).setDate(itemDate);
+            item_list.get(position).setDetails(itemDetail);
             item_list.get(position).setImportant(important);
 
             listSort(sortMode);

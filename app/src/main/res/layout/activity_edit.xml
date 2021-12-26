@@ -53,4 +53,30 @@
         android:text="  Mark as important"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/date" />
+
+    <EditText
+        android:id="@+id/detail"
+        android:layout_width="332dp"
+        android:layout_height="109dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="Write down some details"
+        android:inputType="textMultiLine"
+        android:maxLines="5"
+        android:minLines="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.242"
+        app:layout_constraintStart_toEndOf="@+id/setDetail"
+        app:layout_constraintTop_toBottomOf="@+id/isImportant" />
+
+    <TextView
+        android:id="@+id/setDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:text="Details:"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/isImportant" />
 </android.support.constraint.ConstraintLayout>
