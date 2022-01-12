@@ -178,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
             item_list.get(position).setImportant(important);
 
             listSort(sortMode);
+            sortByImportant();
 
             itemAdapter.notifyItemRangeChanged(0, item_list.size());
             // persist the changes
