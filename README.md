@@ -28,6 +28,8 @@ The following **additional** features are implemented:
 
 * [x] Events can be sort by name or by due date
 
+* [x] Events can now add some details
+
 * [ ] List anything else that you can get done to improve the app functionality!
 
 ## Video Walkthrough
